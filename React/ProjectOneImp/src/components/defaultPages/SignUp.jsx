@@ -1,6 +1,11 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import ModalAlert from "../modalAlert/ModalAlert"
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import ModalAlert from "../modalAlert/ModalAlert";
+import DatePicker from 'react-date-picker'
+import 'react-date-picker/dist/DatePicker.css';
+import 'react-calendar/dist/Calendar.css';
+
+
 
 function SignUp() {
     const [email, setEmail] = useState('')
@@ -10,6 +15,22 @@ function SignUp() {
     const [buttonType, setButtonType] = useState(true)
     const navigate = useNavigate()
     const [errors, setErrors] = useState(null);
+    const [datevalue, setDateValue] = useState(new Date());
+    const [occupation, setOccupation] = useState('');
+    const [gender, setGender] = useState('');
+
+    const dateeventHandler = (e) => {
+      console.log(e);
+      setDateValue(e)
+    }
+    const occupationHandler = (e) => {
+      setOccupation(e)
+    }
+    const genderHandler =(e)=>{
+      setGender(e.target.value)
+    }
+    
+  
     const saveAllData =async(e) => {
         e.preventDefault()
         console.log('hello', email, firstname,lastname,password)
@@ -22,6 +43,9 @@ function SignUp() {
             firstName: firstname,
             lastName: lastname,
             userName: email,
+            gender: gender,
+            dateofbirth: datevalue,
+            occupation: occupation,
             password: password
           }),
         });
@@ -40,6 +64,8 @@ function SignUp() {
         setErrors('Account Created Successfully, Login Now')
         navigate('/login')
     }
+
+    
     const confirmpassword = (val) => {
         var confirmPass = document.getElementById("confirmpassword");
 
@@ -120,6 +146,45 @@ function SignUp() {
               </div>
             </div>
 
+           <div>
+           <label htmlFor="dateofbirth" className="block text-sm font-medium leading-6 text-gray-900">
+                Date Of Birth
+              </label>
+           <DatePicker className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" onChange={(e) => dateeventHandler(e)} value={datevalue} />
+           </div>
+
+<div>
+<label htmlFor="gender" className="block text-sm font-medium leading-6 text-gray-900">
+                Gender :
+              </label>
+              <select onChange={(e)=>genderHandler(e)} id="gender" name="gender" className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                <option value="" defaultValue="">Select Below</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Others">Others</option>
+              </select>
+</div>
+
+<div>
+<label htmlFor="occupation" className="block text-sm font-medium leading-6 text-gray-900">
+                Occupation :
+              </label>
+<fieldset>
+  <select onChange={(e)=>occupationHandler(e.target.value)} className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" id="occupation" name="occupation">
+    <option value="" defaultValue={true} >-- select one --</option>
+    
+        <option value="Self-Employed">Self-Employed</option>
+        <option value="Salaried-Employee">Salaried-Employee</option>
+        <option value="Student">
+          Student
+        </option>
+        <option value="Others">Others</option>
+   </select>
+</fieldset>
+
+</div>
+
+
             <div>
               <div className="flex items-center justify-between">
                 <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
@@ -167,6 +232,14 @@ function SignUp() {
               </button>
             </div>
           </form>
+
+          <p className="mt-10 text-center text-sm text-gray-500">
+            Already a member?{' '}
+            <Link to="/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+              Login Account
+            </Link>
+          </p>
+
         </div>
       </div>
       </>

@@ -3,6 +3,8 @@ import {Outlet} from 'react-router-dom'
 import { TokenProvider } from './context'
 import { useState } from 'react'
 import Footer from './components/defaultPages/Footer'
+import 'flowbite-datepicker';
+import 'flowbite/dist/datepicker.turbo.js';
 
 function App() {
   const [tokens,setTokens] = useState([])

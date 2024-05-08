@@ -5,6 +5,7 @@ import com.shobhitranjan.AddProduct.exception.StorageFileNotFoundException;
 import com.shobhitranjan.AddProduct.external.client.UserService;
 import com.shobhitranjan.AddProduct.interceptor.FeignClientInterceptor;
 import com.shobhitranjan.AddProduct.model.RequestData;
+import com.shobhitranjan.AddProduct.model.RequestPinCode;
 import com.shobhitranjan.AddProduct.model.ResponseData;
 import com.shobhitranjan.AddProduct.service.JwtService;
 import com.shobhitranjan.AddProduct.service.ProductService;
@@ -21,9 +22,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,7 +68,23 @@ public class ProductController {
                 .collect(Collectors.toList()));
     }
 
-    @GetMapping("/")
+    @PostMapping("/updatepd")
+    public String updateProduct(@RequestHeader("Authorization") String token, @RequestParam(value = "file", required = false) List<MultipartFile> file, @RequestParam("id") long id ,RequestData data){
+       // log.info("file received is "+file.get(0).getName());
+       // log.info("file size >> " +file.size() + "  - > " +file.stream().count() );
+       // file.forEach(fil -> {log.info("this is file    "+fil.getName()+ " orig Name  "+fil.getOriginalFilename() + " size-> "+fil.getSize() );});
+
+        return productService.updateProductById(file, id, data);
+       // return null;
+    }
+
+    @PostMapping("/updatestatus")
+    public String updateProductStatus(@RequestHeader("Authorization") String token, @RequestParam(value = "id") String id, @RequestParam(value = "status") String status){
+
+        return productService.updateProductStatus(id, status);
+    }
+
+    @GetMapping("/all")
     public ResponseEntity<Object> getAllProducts(){
         return ResponseEntity.ok(productService.getProducts());
     }
@@ -84,10 +103,14 @@ public class ProductController {
     }
 
     @PostMapping("/")
-    public String handleFileUpload(@RequestHeader("Authorization") String token, @RequestParam("file") List<MultipartFile> file, RequestData data) {
+    public String handleProductUpload(@RequestHeader("Authorization") String token, @RequestParam("file") List<MultipartFile> file, RequestData data) {
         log.info("token :: "+token);
         file.stream().forEach(i -> {log.info("file {}/:"+i.getOriginalFilename());});
-        productService.store(file, token, data);
+        List<MultipartFile> files = new ArrayList<>();
+        files.add(file.get(0));
+        files.add(file.get(file.size()-1));
+        files.stream().forEach(i -> {log.info("file {}/:"+i.getOriginalFilename());});
+        productService.store(files, token, data);
         file.stream().forEach(i -> {System.out.println("");});
         return "UPLOADED";
     }
@@ -104,15 +127,10 @@ public class ProductController {
         return ResponseEntity.ok(allProducts);
     }
 
-//    @PostMapping("/addProduct")
-//    public ProductResponse addProduct(ProductRequest ){
-//
-//    }
-
-    @GetMapping("image/{uId}/{imageName}")
+    @GetMapping("/image/{uId}/{imageName}")
     public ResponseEntity<Resource> getImage(@PathVariable String uId, @PathVariable String imageName) throws IOException {
         // Load the image as a Resource
-       // pictures/uploads/6/Sample-jpg-image-100kb.png
+        log.info("Getting image");
         Path imagePath = Paths.get("pictures/uploads/"+ uId+"/"+ imageName);
         Resource resource = new UrlResource(imagePath.toUri());
 
@@ -121,6 +139,26 @@ public class ProductController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + resource.getFilename())
                 .contentType(MediaType.IMAGE_PNG)
                 .body(resource);
+    }
+
+    @GetMapping("/pincode")
+    public ResponseEntity<?> getProductBasedOnPinCode(@RequestBody RequestPinCode pinCode){
+        log.info("pin code "+pinCode);
+        List<ResponseData> allProductAtPinCode=productService.getAllProductOfThisPinCode(Integer.parseInt(pinCode.getPinCode()));
+        return ResponseEntity.ok(allProductAtPinCode);
+    }
+
+    @GetMapping("/findbyproductid")
+    public ResponseEntity<?> findUserByProductId(@RequestParam("productid") String productid){
+        log.info("fetching product based on productid  :: ", productid);
+        AllProducts allProducts = productService.findUserByProductId(productid);
+        log.info("fetched products : "+allProducts);
+        return ResponseEntity.ok(allProducts);
+    }
+
+    @GetMapping("/getproductbyid/{id}")
+    public AllProducts getProductByProductId(@PathVariable("id") long id){
+        return productService.getProductByProductId(id);
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)

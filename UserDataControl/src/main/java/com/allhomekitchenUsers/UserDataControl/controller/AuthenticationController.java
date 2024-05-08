@@ -1,9 +1,6 @@
 package com.allhomekitchenUsers.UserDataControl.controller;
 
-import com.allhomekitchenUsers.UserDataControl.dto.JWTAuthenticationResponse;
-import com.allhomekitchenUsers.UserDataControl.dto.RefreshTokenRequest;
-import com.allhomekitchenUsers.UserDataControl.dto.SignInRequest;
-import com.allhomekitchenUsers.UserDataControl.dto.SignUpRequest;
+import com.allhomekitchenUsers.UserDataControl.dto.*;
 import com.allhomekitchenUsers.UserDataControl.entity.User;
 import com.allhomekitchenUsers.UserDataControl.service.AuthenticationService;
 import com.allhomekitchenUsers.UserDataControl.service.UserService;
@@ -63,9 +60,14 @@ public class AuthenticationController {
 
     }
 
-    @PostMapping("/getuserid")
+    @GetMapping("/getuserid")
     public long getUserIdByUsername(@RequestParam("username") String username){
         log.info("calling controller getUserIdByUsername with username : "+username);
         return userService.getUserIdByUsername(username);
+    }
+
+    @GetMapping("/userDetails/{email}")
+    public UserDTO getUserByEmail(@PathVariable String email){
+        return userService.getUserByEmail(email);
     }
 }

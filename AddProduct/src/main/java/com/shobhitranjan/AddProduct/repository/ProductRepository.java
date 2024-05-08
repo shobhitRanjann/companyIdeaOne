@@ -13,4 +13,8 @@ public interface ProductRepository extends JpaRepository<AllProducts, Long> {
     Optional<AllProducts> findById(Long aLong);
 
     List<AllProducts> findByUserId(long idUser);
+
+    List<AllProducts> findByUserPinCode(int pinCode);
+
+    AllProducts findByProductId(Long aLong);
 }

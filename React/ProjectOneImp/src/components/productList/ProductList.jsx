@@ -38,6 +38,10 @@ function ProductList() {
 
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
           {data.map((product) => (
+
+            (product.productStatus) !== 'Cancelled' ? 
+              
+            
             <div key={product.productId} className="group relative">
               <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
                 <img
@@ -58,10 +62,11 @@ function ProductList() {
                   <p className="mt-1 text-sm text-gray-500">{product.productDescription}</p>
                 </div>
                 <p className="text-sm font-medium text-gray-900">
-                  {product.productPrice}
+                  ₹{product.productPrice}
                 </p>
               </div>
             </div>
+            :""
           ))}
         </div>
       </div>
@@ -72,12 +77,8 @@ function ProductList() {
 export default ProductList;
 
 export const Allproducts = async () => {
-  const token = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("token="))
-    ?.split("=")[1];
 
-  const response = await fetch("http://localhost:8080/product/", {
+  const response = await fetch("http://localhost:8080/product/all", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

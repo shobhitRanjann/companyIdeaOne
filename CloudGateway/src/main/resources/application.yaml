@@ -14,6 +14,7 @@ spring:
             allowedMethods:
               - GET
               - POST
+              - PUT
               - OPTIONS
       routes:
         - id: USER-DATA
@@ -30,6 +31,22 @@ spring:
             - Path=/product/**
           filters:
             - JwtAuthFilter
+        - id: CONTACT-REQUESTS
+          uri: lb://CONTACT-REQUESTS
+          predicates:
+            - Path=/contact/**
+          filters:
+            - JwtAuthFilter
+        - id: ORDERS-DATA
+          uri: lb://ORDERS-DATA
+          predicates:
+            - Path=/orders/**
+          filters:
+            - JwtAuthFilter
+        - id: REVIEWS
+          uri: lb://REVIEWS
+          predicates:
+            - Path=/reviews/**
 
 eureka:
   instance:

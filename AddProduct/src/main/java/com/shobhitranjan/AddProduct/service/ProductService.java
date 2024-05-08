@@ -26,4 +26,14 @@ public interface ProductService {
     List<ResponseData> getAllProduct(String token);
 
     List<ResponseData> getProducts();
+
+    List<ResponseData> getAllProductOfThisPinCode(int pinCode);
+
+    String updateProductById(List<MultipartFile> file, long id, RequestData data);
+
+    String updateProductStatus(String id, String status);
+
+    AllProducts findUserByProductId(String productid);
+
+    AllProducts getProductByProductId(long id);
 }

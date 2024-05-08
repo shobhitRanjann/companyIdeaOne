@@ -4,6 +4,7 @@ import com.allhomekitchenUsers.UserDataControl.dto.JWTAuthenticationResponse;
 import com.allhomekitchenUsers.UserDataControl.dto.RefreshTokenRequest;
 import com.allhomekitchenUsers.UserDataControl.dto.SignInRequest;
 import com.allhomekitchenUsers.UserDataControl.dto.SignUpRequest;
+import com.allhomekitchenUsers.UserDataControl.entity.Gender;
 import com.allhomekitchenUsers.UserDataControl.entity.Role;
 import com.allhomekitchenUsers.UserDataControl.entity.User;
 import com.allhomekitchenUsers.UserDataControl.exception.ServiceException;
@@ -46,6 +47,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         allUsersDetails.setLastName(signUpRequest.getLastName());
         allUsersDetails.setEmail(signUpRequest.getUserName());
         allUsersDetails.setRole(Role.USER);
+        allUsersDetails.setGender(Gender.valueOf(signUpRequest.getGender().toUpperCase()));
+        allUsersDetails.setDateofbirth(signUpRequest.getDateofbirth());
+        allUsersDetails.setOccupation(signUpRequest.getOccupation());
         allUsersDetails.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         allUsersDetails.setDate(new Date(System.currentTimeMillis()));
         log.info("in signup service end");

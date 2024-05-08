@@ -18,14 +18,14 @@ import {
   PhoneIcon,
   PlayCircleIcon,
 } from "@heroicons/react/20/solid";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, Navigate, useNavigate } from "react-router-dom";
 import { isExpired, decodeToken } from "react-jwt";
 
 const products = [
   {
-    name: "Orders",
+    name: "Orders Received",
     description: "Get a better understanding of your orders",
-    href: "#",
+    href: "/ordersreceived",
     icon: ChartPieIcon,
   },
   {
@@ -65,6 +65,8 @@ function classNames(...classes) {
 function NavBar({ tokens }) {
   console.log("Navbar  >> ", tokens.token);
   const [username, setUsername] = useState();
+  const [userEmail, setUserEmail] = useState();
+  const navigate  = useNavigate();
 
   //console.log('this is token ', token)
   const cookieValue = document.cookie
@@ -79,6 +81,7 @@ function NavBar({ tokens }) {
       if (cookieValue != undefined && cookieValue !== '') {
         console.log("decodedToken  > ", decodeToken(cookieValue));
         setUsername(decodeToken(cookieValue).name);
+        setUserEmail(decodeToken(cookieValue).sub);
       }
     } catch (error) {
       console.log("error hai");
@@ -104,8 +107,27 @@ function NavBar({ tokens }) {
     setUsername(null)
     
   }
+  const getAccountDetails=async()=>{
+    const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("refresh="))
+    ?.split("=")[1];
+    const response = await fetch(`http://localhost:8080/api/v1/auth/userDetails/${userEmail}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+  if(!response.ok){
+    console.log("Error Fetching Account Details..")
+    return;
+  }
+  navigate('/userdetail',{state:{id:1,name:await response.json()}});
+
+  }
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [desktopMenClose, setDesktopMenClose] = useState(true);
   return (
     <header className="bg-white">
       <nav
@@ -129,7 +151,7 @@ function NavBar({ tokens }) {
           </button>
         </div>
         <Popover.Group className="hidden lg:flex lg:gap-x-12">
-          <Popover className="relative">
+          <Popover className="relative" >
             <Popover.Button className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
               Product
               <ChevronDownIcon
@@ -137,7 +159,6 @@ function NavBar({ tokens }) {
                 aria-hidden="true"
               />
             </Popover.Button>
-
             <Transition
               as={Fragment}
               enter="transition ease-out duration-200"
@@ -147,6 +168,7 @@ function NavBar({ tokens }) {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
+             
               <Popover.Panel className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
                 <div className="p-4">
                   {products.map((item) => (
@@ -161,13 +183,13 @@ function NavBar({ tokens }) {
                         />
                       </div>
                       <div className="flex-auto">
-                        <a
-                          href={item.href}
-                          className="block font-semibold text-gray-900"
+                        <Link
+                          to={item.href}
+                          className= "block font-semibold text-gray-900"
                         >
                           {item.name}
                           <span className="absolute inset-0" />
-                        </a>
+                        </Link> 
                         <p className="mt-1 text-gray-600">{item.description}</p>
                       </div>
                     </div>
@@ -188,7 +210,7 @@ function NavBar({ tokens }) {
                     </a>
                   ))}
                 </div>
-              </Popover.Panel>
+              </Popover.Panel> 
             </Transition>
           </Popover>
 
@@ -214,14 +236,14 @@ function NavBar({ tokens }) {
             About Us
           </NavLink>
           <NavLink
-            to="/contact"
+            to="/addProduct"
             className={({ isActive }) =>
               `text-sm font-semibold leading-6 ${
                 isActive ? " text-orange-700 " : " text-gray-900 "
               } `
             }
           >
-            Trending
+            Add Product
           </NavLink>
         </Popover.Group>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
@@ -252,13 +274,13 @@ function NavBar({ tokens }) {
                   <Menu.Item>
                     {({ active }) => (
                       <a
-                        href="#"
                         className={classNames(
                           active
                             ? "bg-gray-100 text-gray-900"
                             : "text-gray-700",
                           "block px-4 py-2 text-sm"
                         )}
+                        onClick={getAccountDetails}
                       >
                         Account Information
                       </a>
@@ -266,8 +288,8 @@ function NavBar({ tokens }) {
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
-                      <a
-                        href="#"
+                      <NavLink
+                        to="/contact"
                         className={classNames(
                           active
                             ? "bg-gray-100 text-gray-900"
@@ -276,13 +298,13 @@ function NavBar({ tokens }) {
                         )}
                       >
                         Support
-                      </a>
+                      </NavLink>
                     )}
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
-                      <a
-                        href="#"
+                      <Link
+                        to="/booking"
                         className={classNames(
                           active
                             ? "bg-gray-100 text-gray-900"
@@ -291,7 +313,7 @@ function NavBar({ tokens }) {
                         )}
                       >
                         Orders
-                      </a>
+                      </Link>
                     )}
                   </Menu.Item>
                   <form method="POST" onSubmit={logout}>
@@ -371,14 +393,14 @@ function NavBar({ tokens }) {
                       </Disclosure.Button>
                       <Disclosure.Panel className="mt-2 space-y-2">
                         {[...products, ...callsToAction].map((item) => (
-                          <Disclosure.Button
+                          <Link
                             key={item.name}
-                            as="a"
-                            href={item.href}
+                            to={item.href}
                             className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                            onClick={() => setMobileMenuOpen(false)}
                           >
                             {item.name}
-                          </Disclosure.Button>
+                          </Link>
                         ))}
                       </Disclosure.Panel>
                     </>
@@ -391,6 +413,7 @@ function NavBar({ tokens }) {
                     isActive ? "text-orange-700 hover:bg-gray-50" : "text-gray-900 hover:bg-gray-50"
                   } `
                 }
+                onClick={() => setMobileMenuOpen(false)}
                 >
                   Our Aim
                 </NavLink>
@@ -401,18 +424,20 @@ function NavBar({ tokens }) {
                     isActive ? "text-orange-700 hover:bg-gray-50 " : "text-gray-900 hover:bg-gray-50"
                   } `
                 }
+                onClick={() => setMobileMenuOpen(false)}
                 >
                   About Us
                 </NavLink>
                 <NavLink
-                  to="/trending"
+                  to="/addProduct"
                   className={({ isActive }) =>
                   `-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 ${
                     isActive ? "text-orange-700 hover:bg-gray-50" : "text-gray-900 hover:bg-gray-50"
                   } `
                 }
+                onClick={() => setMobileMenuOpen(false)}
                 >
-                  Trending
+                  Add Product
                 </NavLink>
               </div>
               <div className="py-6">
@@ -443,13 +468,13 @@ function NavBar({ tokens }) {
                   <Menu.Item>
                     {({ active }) => (
                       <a
-                        href="#"
                         className={classNames(
                           active
                             ? "bg-gray-100 text-gray-900"
                             : "text-gray-700",
                           "block px-4 py-2 text-sm"
                         )}
+                        onClick={getAccountDetails}
                       >
                         Account Information
                       </a>
@@ -472,17 +497,18 @@ function NavBar({ tokens }) {
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
-                      <a
-                        href="#"
+                      <Link
+                        to="/booking"
                         className={classNames(
                           active
                             ? "bg-gray-100 text-gray-900"
                             : "text-gray-700",
                           "block px-4 py-2 text-sm"
                         )}
+                        onClick={() => setMobileMenuOpen(false)}
                       >
                         Orders
-                      </a>
+                      </Link>
                     )}
                   </Menu.Item>
                   

@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom"
 
 function Footer() {
   return (
@@ -41,9 +42,9 @@ function Footer() {
                 </a>
               </li>
               <li className="p-5">
-                <a className="font-medium text-gray-600 hover:text-gray-700" href="#">
+                <NavLink className="font-medium text-gray-600 hover:text-gray-700" to="/contact">
                   Contact Us
-                </a>
+                </NavLink>
               </li>
             </ul>
           </div>

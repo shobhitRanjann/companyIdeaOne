@@ -83,7 +83,7 @@ function SignIn() {
                 Email address
               </label>
               <div className="mt-2">
-                <input
+                <input 
                   id="email"
                   name="email"
                   type="email"

@@ -1,5 +1,6 @@
 package com.allhomekitchenUsers.UserDataControl.service.impl;
 
+import com.allhomekitchenUsers.UserDataControl.dto.UserDTO;
 import com.allhomekitchenUsers.UserDataControl.entity.User;
 import com.allhomekitchenUsers.UserDataControl.exception.ServiceException;
 import com.allhomekitchenUsers.UserDataControl.repository.UsersRepository;
@@ -51,5 +52,20 @@ public class UserServiceImpl implements UserService {
             return user.get().getId();
         }
         return 0;
+    }
+
+    @Override
+    public UserDTO getUserByEmail(String email) {
+        log.info("Geting user by user id :: "+email);
+        User user = userRepository.findByEmail(email).orElseThrow();
+        return UserDTO.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .dateofbirth(user.getDateofbirth())
+                .occupation(user.getOccupation())
+                .gender(user.getGender().name())
+                .date(user.getDate())
+                .build();
     }
 }

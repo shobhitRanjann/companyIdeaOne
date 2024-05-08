@@ -12,6 +12,8 @@ public class RequestData {
     public String productDescription;
     public int productPrice;
     public String productStatus;
+    public String productState;
+    public String productCity;
     public String productUserLocation;
     public int userPinCode;
 }

@@ -23,6 +23,8 @@ public class AllProducts {
     private String productDescription;
     private int productPrice;
     private String productStatus;
+    private String productState;
+    private String productCity;
     private String productLocation;
     private int userPinCode;
     private boolean productImageAvailable;

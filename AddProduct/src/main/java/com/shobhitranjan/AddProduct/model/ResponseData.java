@@ -16,6 +16,10 @@ public class ResponseData {
     public String productDescription;
     public int productPrice;
     public String productStatus;
+    public String productState;
+    public String productCity;
     public String productUserLocation;
+    public String productUserid;
+    public int userPinCode;
     private List<String> productImagePath;
 }

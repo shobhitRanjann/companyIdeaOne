@@ -12,6 +12,13 @@ import SignUp from './components/defaultPages/SignUp.jsx'
 import Trendings from './components/trending/Trendings.jsx'
 import ProductList, { Allproducts } from './components/productList/ProductList.jsx'
 import ProductDetail from './components/productList/ProductDetail.jsx'
+import AddProduct, {Addproducts} from './components/addProduct/AddProduct.jsx'
+import EditOrCreateProduct from './components/editOrCreateProduct/EditOrCreateProduct.jsx'
+import PreviewPage from './components/previewPage/PreviewPage.jsx'
+import UserDetails from './components/defaultPages/UserDetails.jsx'
+import Testingpage from './components/ourAim/Testingpage.jsx'
+import GetOrder, { Allorders } from './components/getorders/GetOrder.jsx'
+import Ordersbooked, { Allcustomerorders } from './components/mybooking/Ordersbooked.jsx'
 const routes = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App/>}>
@@ -24,6 +31,13 @@ const routes = createBrowserRouter(
       <Route path='/trending' element={<Trendings/>} />
       <Route path='/products' loader={Allproducts} element={<ProductList/>} />
       <Route path='/detail' element={<ProductDetail/>}/>
+      <Route path='/addProduct' loader={Addproducts} element={<AddProduct/>}/>
+      <Route path="/productdet" element={<EditOrCreateProduct/> }/>
+      <Route path="/preview" element={<PreviewPage/>}/>
+      <Route path='/userdetail' element={<UserDetails />}/>
+      <Route path='/testingpage' element={<Testingpage/>} />
+      <Route path='/ordersreceived' loader={Allorders} element={<GetOrder/>}/>
+      <Route path='/booking' loader={Allcustomerorders} element={<Ordersbooked/>}/>
       {/* <Route path='/about' element={<About/>} />
       <Route path='/contact' element={<Contact/>}/>
       <Route path='/user/:userid' element={<User/>} />
